@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Toonify Lab</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="workspace" aria-labelledby="app-title">
+        <div class="topbar">
+          <div>
+            <h1 id="app-title">Toonify Lab</h1>
+            <p>사진을 업로드하고 로컬 변환 결과를 확인합니다.</p>
+          </div>
+          <a class="docs-link" href="/docs" target="_blank" rel="noreferrer">API Docs</a>
+        </div>
+
+        <form id="toonify-form" class="tool" autocomplete="off">
+          <label class="dropzone" for="image-input">
+            <input id="image-input" name="image" type="file" accept="image/png,image/jpeg,image/webp" />
+            <span class="dropzone-title">이미지 선택</span>
+            <span id="file-name" class="dropzone-meta">JPEG, PNG, WebP</span>
+          </label>
+
+          <div class="controls">
+            <label for="style-select">스타일</label>
+            <select id="style-select" name="style">
+              <option value="cartoon">Cartoon</option>
+              <option value="character">Character</option>
+              <option value="illustration">Illustration</option>
+            </select>
+            <button id="submit-button" type="submit">변환 시작</button>
+          </div>
+
+          <div class="prompt-panel">
+            <div class="prompt-header">
+              <label for="prompt-input">프롬프트</label>
+              <button id="reset-prompt-button" class="secondary-button" type="button">기본값</button>
+            </div>
+            <textarea
+              id="prompt-input"
+              name="prompt"
+              rows="5"
+              maxlength="2000"
+              placeholder="workflow JSON의 기본 프롬프트를 불러오는 중입니다."
+            ></textarea>
+            <p class="prompt-help">
+              입력한 내용이 ComfyUI positive prompt로 사용됩니다. 비워두면 스타일 기본값을 사용합니다.
+            </p>
+          </div>
+        </form>
+
+        <div class="status-row">
+          <div>
+            <span class="status-label">상태</span>
+            <strong id="status-text">대기 중</strong>
+          </div>
+          <div id="job-id" class="job-id"></div>
+        </div>
+
+        <section class="preview-grid" aria-label="이미지 미리보기">
+          <figure>
+            <figcaption>원본</figcaption>
+            <div class="preview-frame">
+              <img id="source-preview" alt="업로드한 원본 미리보기" />
+              <span id="source-empty">선택된 이미지가 없습니다.</span>
+            </div>
+          </figure>
+
+          <figure>
+            <figcaption>결과</figcaption>
+            <div class="preview-frame">
+              <img id="result-preview" alt="변환 결과 미리보기" />
+              <span id="result-empty">변환 결과가 여기에 표시됩니다.</span>
+            </div>
+          </figure>
+        </section>
+
+        <div class="actions">
+          <a id="download-link" class="download-link" href="#" download hidden>결과 다운로드</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
