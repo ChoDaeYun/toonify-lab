@@ -40,7 +40,7 @@
   },
   "6": {
     "inputs": {
-      "text": "preserve the person, keep the same human subject, same pose, same face, same body, same clothing, portrait of a person, do not remove the person",
+      "text": "A portrait of the same central person, preserving the exact same human subject, pose, face, features, and clothing. Remove all other background people on the left and right sides, leaving only the single central subject. Clean, crisp line art, distinct cel-shaded coloring, expressive natural face, stylized animated character design, vibrant colors, cinematic lighting, highly polished animated movie aesthetic. Neutral simple background, no Japanese setting, no Japanese architecture, no street signs, no cultural landmarks.",
       "clip": [
         "4",
         1
