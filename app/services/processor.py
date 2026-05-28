@@ -2,8 +2,9 @@ import base64
 from pathlib import Path
 from shutil import copyfile
 
-from app.schemas.jobs import ToonifyStyle
+from app.schemas.jobs import ToonifyModel, ToonifyStyle
 from app.services.comfyui import transform_with_comfyui
+from app.services.image_editing import CropBox, crop_image
 from app.services.jobs import job_store
 
 
@@ -11,7 +12,14 @@ def process_toonify_job(
     job_id: str,
     source_path: Path,
     style: ToonifyStyle,
+    model: ToonifyModel,
     prompt: str | None,
+    width: int | None,
+    height: int | None,
+    crop_x: int | None,
+    crop_y: int | None,
+    crop_width: int | None,
+    crop_height: int | None,
     result_dir: Path,
     image_provider: str = "mock",
     openai_api_key: str | None = None,
@@ -25,9 +33,11 @@ def process_toonify_job(
 
     try:
         result_dir.mkdir(parents=True, exist_ok=True)
+        crop_box = _build_crop_box(crop_x, crop_y, crop_width, crop_height)
+        transform_source_path = crop_image(source_path, result_dir, job_id, crop_box)
         if image_provider == "openai":
             result_path = _transform_with_openai(
-                source_path=source_path,
+                source_path=transform_source_path,
                 style=style,
                 result_dir=result_dir,
                 job_id=job_id,
@@ -38,9 +48,12 @@ def process_toonify_job(
             )
         elif image_provider == "comfyui":
             result_path = transform_with_comfyui(
-                source_path=source_path,
+                source_path=transform_source_path,
                 style=style,
+                model=model,
                 prompt=prompt,
+                width=width,
+                height=height,
                 result_dir=result_dir,
                 job_id=job_id,
                 base_url=comfyui_base_url,
@@ -49,7 +62,7 @@ def process_toonify_job(
             )
         else:
             result_path = _transform_with_mock(
-                source_path=source_path,
+                source_path=transform_source_path,
                 style=style,
                 result_dir=result_dir,
                 job_id=job_id,
@@ -59,6 +72,27 @@ def process_toonify_job(
         return
 
     job_store.mark_completed(job_id, result_path)
+
+
+def _build_crop_box(
+    crop_x: int | None,
+    crop_y: int | None,
+    crop_width: int | None,
+    crop_height: int | None,
+) -> CropBox | None:
+    values = (crop_x, crop_y, crop_width, crop_height)
+    if all(value is None for value in values):
+        return None
+
+    if any(value is None for value in values):
+        raise ValueError("Crop area requires crop_x, crop_y, crop_width, and crop_height.")
+
+    return CropBox(
+        x=crop_x,
+        y=crop_y,
+        width=crop_width,
+        height=crop_height,
+    )
 
 
 def _transform_with_mock(

@@ -27,6 +27,7 @@ workflows/toonify_img2img.json
 
 ```text
 LoadImage
+-> ImageScale
 -> VAEEncode
 -> KSampler
 -> VAEDecode
@@ -137,8 +138,8 @@ no person, missing person, empty scene, landscape only, object only
 `KSampler` 노드에서 조정합니다.
 
 ```json
-"steps": 20,
-"cfg": 8
+"steps": 12,
+"cfg": 6
 ```
 
 기준:
@@ -147,6 +148,59 @@ no person, missing person, empty scene, landscape only, object only
 - `steps 25~35`: 더 안정적이지만 느림
 - `cfg 5~7`: 원본 반영이 부드러움
 - `cfg 8~10`: 프롬프트 반영이 강함
+
+## 입력 이미지 크기
+
+현재 workflow는 원본 이미지를 바로 처리하지 않고 `ImageScale` 노드에서 먼저 낮은 해상도로 줄입니다.
+
+```json
+"width": 512,
+"height": 768
+```
+
+처리가 너무 느리거나 timeout이 나면 이 값을 더 낮출 수 있습니다.
+
+```json
+"width": 384,
+"height": 576
+```
+
+품질이 부족하면 다시 높입니다.
+
+```json
+"width": 768,
+"height": 1024
+```
+
+Web UI에서는 이 값을 직접 수정할 수 있습니다. 입력한 `width`, `height`는 요청별로 workflow의 `ImageScale` 노드에 반영됩니다.
+
+## 크롭
+
+큰 이미지에서 일부 영역만 변환하고 싶으면 Web UI의 원본 미리보기에서 크롭 박스를 이동하고 크롭 너비/높이 슬라이더를 조정합니다.
+
+크롭은 ComfyUI 호출 전에 FastAPI에서 먼저 적용됩니다. 이후 잘린 이미지가 workflow의 `LoadImage` 입력으로 전달됩니다.
+
+크롭 박스는 다음 방식으로 조정합니다.
+
+- 박스 내부 드래그: 위치 이동
+- 오른쪽 아래 핸들 드래그: 현재 비율을 유지하며 크기 조절
+- 크롭 너비/높이 슬라이더: 수치 기반 조절
+
+API 요청 예시:
+
+```json
+{
+  "image_id": "uploaded_image_id",
+  "style": "cartoon",
+  "prompt": "preserve the person, clean cartoon style",
+  "width": 512,
+  "height": 768,
+  "crop_x": 10,
+  "crop_y": 20,
+  "crop_width": 300,
+  "crop_height": 400
+}
+```
 
 ## Checkpoint 변경
 

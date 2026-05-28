@@ -10,6 +10,8 @@ Toonify Lab은 사용자가 업로드한 이미지를 로컬 ComfyUI, OpenAI Ima
 - 변환 작업 생성 및 상태 관리
 - 변환 결과 이미지 조회/다운로드
 - Web UI에서 업로드, 프롬프트 입력, 스타일 선택, 결과 미리보기
+- 입력 이미지 변환 크기 조정
+- 큰 이미지에서 사용할 영역 크롭
 - provider 선택
   - `mock`: 개발용 원본 복사
   - `comfyui`: Mac 로컬 ComfyUI 서버 연동
@@ -93,7 +95,13 @@ GET  /api/jobs/{job_id}/result
 {
   "image_id": "uploaded_image_id",
   "style": "cartoon",
-  "prompt": "preserve the person, clean cartoon portrait, soft shading"
+  "prompt": "preserve the person, clean cartoon portrait, soft shading",
+  "width": 512,
+  "height": 768,
+  "crop_x": 10,
+  "crop_y": 20,
+  "crop_width": 300,
+  "crop_height": 400
 }
 ```
 

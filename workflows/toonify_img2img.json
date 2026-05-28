@@ -3,10 +3,10 @@
     "inputs": {
       "seed": 65896305728072,
       "steps": 25,
-      "cfg": 9,
-      "sampler_name": "euler",
-      "scheduler": "normal",
-      "denoise": 0.4,
+      "cfg": 6.5,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 0.32,
       "model": [
         "4",
         0
@@ -40,7 +40,7 @@
   },
   "6": {
     "inputs": {
-      "text": "A portrait of the same central person, preserving the exact same human subject, pose, face, features, and clothing. Remove all other background people on the left and right sides, leaving only the single central subject. Clean, crisp line art, distinct cel-shaded coloring, expressive natural face, stylized animated character design, vibrant colors, cinematic lighting, highly polished animated movie aesthetic. Neutral simple background, no Japanese setting, no Japanese architecture, no street signs, no cultural landmarks.",
+      "text": "anime style illustration, soft cel shading, watercolor-like coloring, gentle pastel tones, detailed nature background, 1990s-2000s Japanese anime aesthetic, Studio Ghibli inspired, soft natural lighting, hand-drawn feel, delicate linework, muted earthy color palette, slightly grainy texture, storybook illustration quality, high detail, (highly detailed face:1.3), (sharp facial features:1.2), clear eyes with detailed iris, well-defined nose and lips, clean line art on face, (face preservation:1.4), (two boys:1.5), (2 boys:1.5), male children, both male, preserve number of people, preserve gender, same person same identity, same pose same expression, same clothing same background, best quality",
       "clip": [
         "4",
         1
@@ -53,7 +53,7 @@
   },
   "7": {
     "inputs": {
-      "text": "text, watermark, logo, signature, blurry, low quality, low resolution, distorted, deformed, bad anatomy, no person, missing person, empty scene, landscape only, object only",
+      "text": "3d render, photorealistic, harsh shadows, oversaturated colors, glossy plastic look, sharp digital edges, low quality, blurry, (blurry face:1.5), (deformed face:1.5), (distorted face:1.5), (melting face:1.4), (morphed face:1.4), (ugly:1.3), (bad anatomy:1.3), asymmetrical eyes, misaligned eyes, cross-eyed, extra eyes, missing eyes, no pupils, blank eyes, unnatural eyes, malformed nose, missing nose, extra nose, malformed mouth, missing mouth, unnatural mouth, deformed ears, missing ears, extra limbs, missing limbs, (missing person:1.5), (extra person:1.4), (wrong number of people:1.5), (gender change:1.5), (girl:1.4), (female:1.4), (woman:1.4), watermark, text, logo, signature, worst quality, jpeg artifacts",
       "clip": [
         "4",
         1
@@ -96,7 +96,7 @@
   "10": {
     "inputs": {
       "pixels": [
-        "11",
+        "12",
         0
       ],
       "vae": [
@@ -117,6 +117,22 @@
     "class_type": "LoadImage",
     "_meta": {
       "title": "이미지 로드"
+    }
+  },
+  "12": {
+    "inputs": {
+      "image": [
+        "11",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "width": 832,
+      "height": 1216,
+      "crop": "disabled"
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "이미지 축소"
     }
   }
 }

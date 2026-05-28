@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from uuid import uuid4
 
-from app.schemas.jobs import JobStatus, ToonifyStyle
+from app.schemas.jobs import JobStatus, ToonifyModel, ToonifyStyle
 
 
 @dataclass
@@ -11,7 +11,14 @@ class ToonifyJob:
     id: str
     image_id: str
     style: ToonifyStyle
+    model: ToonifyModel
     prompt: str | None
+    width: int | None
+    height: int | None
+    crop_x: int | None
+    crop_y: int | None
+    crop_width: int | None
+    crop_height: int | None
     status: JobStatus
     result_path: Path | None
     error_message: str | None
@@ -23,13 +30,32 @@ class JobStore:
     def __init__(self) -> None:
         self._jobs: dict[str, ToonifyJob] = {}
 
-    def create(self, image_id: str, style: ToonifyStyle, prompt: str | None = None) -> ToonifyJob:
+    def create(
+        self,
+        image_id: str,
+        style: ToonifyStyle,
+        model: ToonifyModel = ToonifyModel.nova_anime_xl,
+        prompt: str | None = None,
+        width: int | None = None,
+        height: int | None = None,
+        crop_x: int | None = None,
+        crop_y: int | None = None,
+        crop_width: int | None = None,
+        crop_height: int | None = None,
+    ) -> ToonifyJob:
         now = datetime.now(UTC)
         job = ToonifyJob(
             id=uuid4().hex,
             image_id=image_id,
             style=style,
+            model=model,
             prompt=prompt,
+            width=width,
+            height=height,
+            crop_x=crop_x,
+            crop_y=crop_y,
+            crop_width=crop_width,
+            crop_height=crop_height,
             status=JobStatus.pending,
             result_path=None,
             error_message=None,

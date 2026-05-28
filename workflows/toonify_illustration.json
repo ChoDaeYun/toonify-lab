@@ -1,0 +1,84 @@
+{
+  "3": {
+    "inputs": {
+      "seed": 65896305728072,
+      "steps": 25,
+      "cfg": 6.0,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 0.28,
+      "model": ["4", 0],
+      "positive": ["6", 0],
+      "negative": ["7", 0],
+      "latent_image": ["10", 0]
+    },
+    "class_type": "KSampler",
+    "_meta": { "title": "KSampler" }
+  },
+  "4": {
+    "inputs": {
+      "ckpt_name": "novaAnimeXL_ilV190.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": { "title": "체크포인트 로드" }
+  },
+  "6": {
+    "inputs": {
+      "text": "anime style illustration, soft cel shading, watercolor-like coloring, gentle pastel tones, detailed nature background, 1990s-2000s Japanese anime aesthetic, Studio Ghibli inspired, soft natural lighting, hand-drawn feel, delicate linework, muted earthy color palette, slightly grainy texture, storybook illustration quality, high detail, (face preservation:1.5), (keep original face:1.4), (highly detailed face:1.4), (sharp facial features:1.3), (accurate eyes:1.3), clear eyes with detailed iris, well-defined nose and lips, clean line art on face, natural facial proportions, same person same identity, same pose same expression, same clothing same background, best quality",
+      "clip": ["4", 1]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": { "title": "CLIP 텍스트 인코딩 (프롬프트)" }
+  },
+  "7": {
+    "inputs": {
+      "text": "(deformed face:1.6), (distorted face:1.6), (blurry face:1.6), (melting face:1.5), (morphed face:1.5), (wrong face:1.5), (disfigured:1.4), (ugly:1.4), (bad anatomy:1.4), asymmetrical eyes, misaligned eyes, cross-eyed, extra eyes, missing eyes, no pupils, blank eyes, floating eyes, unnatural eyes, malformed nose, malformed mouth, deformed ears, missing limbs, extra limbs, 3d render, photorealistic, harsh shadows, oversaturated colors, glossy plastic look, watermark, text, logo, signature, worst quality, jpeg artifacts",
+      "clip": ["4", 1]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": { "title": "CLIP 텍스트 인코딩 (프롬프트)" }
+  },
+  "8": {
+    "inputs": {
+      "samples": ["3", 0],
+      "vae": ["4", 2]
+    },
+    "class_type": "VAEDecode",
+    "_meta": { "title": "VAE 디코드" }
+  },
+  "9": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": ["8", 0]
+    },
+    "class_type": "SaveImage",
+    "_meta": { "title": "이미지 저장" }
+  },
+  "10": {
+    "inputs": {
+      "pixels": ["12", 0],
+      "vae": ["4", 2]
+    },
+    "class_type": "VAEEncode",
+    "_meta": { "title": "VAE 인코드" }
+  },
+  "11": {
+    "inputs": {
+      "image": "toonify_input.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": { "title": "이미지 로드" }
+  },
+  "12": {
+    "inputs": {
+      "image": ["11", 0],
+      "upscale_method": "lanczos",
+      "width": 832,
+      "height": 1216,
+      "crop": "disabled"
+    },
+    "class_type": "ImageScale",
+    "_meta": { "title": "이미지 축소" }
+  }
+}

@@ -5,24 +5,34 @@ from uuid import uuid4
 
 import httpx
 
-from app.schemas.jobs import ToonifyStyle
+from app.schemas.jobs import ToonifyModel, ToonifyStyle
+
+
+def resolve_workflow_path(base_workflow_path: Path, style: ToonifyStyle) -> Path:
+    style_file = base_workflow_path.parent / f"toonify_{style.value}.json"
+    if style_file.exists():
+        return style_file
+    return base_workflow_path
 
 
 def transform_with_comfyui(
     source_path: Path,
     style: ToonifyStyle,
+    model: ToonifyModel,
     prompt: str | None,
+    width: int | None,
+    height: int | None,
     result_dir: Path,
     job_id: str,
     base_url: str,
     workflow_path: Path,
     timeout_seconds: int,
 ) -> Path:
-    workflow = _load_workflow(workflow_path)
+    workflow = _load_workflow(resolve_workflow_path(workflow_path, style))
 
     with httpx.Client(base_url=base_url, timeout=30) as client:
         uploaded_name = _upload_image(client, source_path)
-        _patch_workflow(workflow, uploaded_name, style, prompt, job_id)
+        _patch_workflow(workflow, uploaded_name, style, model, prompt, width, height, job_id)
         prompt_id = _queue_prompt(client, workflow)
         image_info = _wait_for_result(client, prompt_id, timeout_seconds)
         image_bytes = _download_image(client, image_info)
@@ -52,26 +62,50 @@ def _upload_image(client: httpx.Client, source_path: Path) -> str:
     return response.json()["name"]
 
 
-def get_default_workflow_prompt(workflow_path: Path) -> str:
-    workflow = _load_workflow(workflow_path)
+def get_default_workflow_prompt(workflow_path: Path, style: ToonifyStyle | None = None) -> str:
+    path = resolve_workflow_path(workflow_path, style) if style else workflow_path
+    workflow = _load_workflow(path)
     return _find_positive_prompt_node(workflow)["inputs"]["text"]
+
+
+def get_default_image_size(workflow_path: Path, style: ToonifyStyle | None = None) -> tuple[int, int]:
+    path = resolve_workflow_path(workflow_path, style) if style else workflow_path
+    workflow = _load_workflow(path)
+    scale_node = _find_optional_node(workflow, "ImageScale")
+    if scale_node is None:
+        return 512, 768
+
+    inputs = scale_node.get("inputs", {})
+    return int(inputs.get("width", 512)), int(inputs.get("height", 768))
 
 
 def _patch_workflow(
     workflow: dict,
     image_name: str,
     style: ToonifyStyle,
+    model: ToonifyModel,
     prompt: str | None,
+    width: int | None,
+    height: int | None,
     job_id: str,
 ) -> None:
     load_image_node = _find_node(workflow, "LoadImage")
     positive_node = _find_positive_prompt_node(workflow)
     save_image_node = _find_node(workflow, "SaveImage")
+    scale_node = _find_optional_node(workflow, "ImageScale")
+    checkpoint_node = _find_optional_node(workflow, "CheckpointLoaderSimple")
 
     load_image_node["inputs"]["image"] = image_name
     positive_node["inputs"]["text"] = (
         prompt.strip() if prompt and prompt.strip() else _build_toonify_prompt(style)
     )
+    if checkpoint_node is not None:
+        checkpoint_node["inputs"]["ckpt_name"] = model.value
+    if scale_node is not None:
+        if width is not None:
+            scale_node["inputs"]["width"] = width
+        if height is not None:
+            scale_node["inputs"]["height"] = height
     save_image_node["inputs"]["filename_prefix"] = f"toonify_lab/{job_id}-{style.value}"
 
 
@@ -132,6 +166,13 @@ def _find_node(workflow: dict, class_type: str) -> dict:
         if node.get("class_type") == class_type:
             return node
     raise ValueError(f"Workflow does not include a {class_type} node.")
+
+
+def _find_optional_node(workflow: dict, class_type: str) -> dict | None:
+    for node in workflow.values():
+        if node.get("class_type") == class_type:
+            return node
+    return None
 
 
 def _find_positive_prompt_node(workflow: dict) -> dict:

@@ -31,6 +31,11 @@
               <option value="character">Character</option>
               <option value="illustration">Illustration</option>
             </select>
+            <label for="model-select">모델</label>
+            <select id="model-select" name="model">
+              <option value="novaAnimeXL_ilV190.safetensors">Nova Anime XL</option>
+              <option value="catTowerNoobaiXL_chenkinnoobV12.safetensors">Cat Tower NoobAI XL</option>
+            </select>
             <button id="submit-button" type="submit">변환 시작</button>
           </div>
 
@@ -50,6 +55,26 @@
               입력한 내용이 ComfyUI positive prompt로 사용됩니다. 비워두면 스타일 기본값을 사용합니다.
             </p>
           </div>
+
+          <div class="size-panel">
+            <div class="size-header">
+              <span>입력 이미지 크기</span>
+              <button id="reset-size-button" class="secondary-button" type="button">기본값</button>
+            </div>
+            <div class="size-fields">
+              <label for="width-input">
+                Width
+                <input id="width-input" name="width" type="number" min="256" max="1536" step="64" />
+              </label>
+              <label for="height-input">
+                Height
+                <input id="height-input" name="height" type="number" min="256" max="1536" step="64" />
+              </label>
+            </div>
+            <p class="prompt-help">
+              낮을수록 빠르고, 높을수록 품질은 좋아지지만 처리 시간이 늘어납니다.
+            </p>
+          </div>
         </form>
 
         <div class="status-row">
@@ -65,7 +90,24 @@
             <figcaption>원본</figcaption>
             <div class="preview-frame">
               <img id="source-preview" alt="업로드한 원본 미리보기" />
+              <div id="crop-box" class="crop-box" hidden>
+                <span data-handle="resize"></span>
+              </div>
               <span id="source-empty">선택된 이미지가 없습니다.</span>
+            </div>
+            <div class="crop-controls">
+              <button id="reset-crop-button" class="secondary-button" type="button">크롭 초기화</button>
+              <span id="crop-meta">전체 이미지 사용</span>
+            </div>
+            <div class="crop-sliders">
+              <label for="crop-width-input">
+                크롭 너비
+                <input id="crop-width-input" type="range" min="20" max="100" value="80" />
+              </label>
+              <label for="crop-height-input">
+                크롭 높이
+                <input id="crop-height-input" type="range" min="20" max="100" value="80" />
+              </label>
             </div>
           </figure>
 

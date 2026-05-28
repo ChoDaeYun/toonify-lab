@@ -98,7 +98,13 @@ button {
   gap: 8px;
 }
 
-.prompt-header {
+.size-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.prompt-header,
+.size-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -141,6 +147,8 @@ button {
 
 .controls label,
 .prompt-header label,
+.size-header,
+.size-fields label,
 .status-label {
   color: var(--muted);
   font-size: 13px;
@@ -149,6 +157,27 @@ button {
 }
 
 select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.size-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.size-fields label {
+  display: grid;
+  gap: 8px;
+}
+
+.size-fields input {
   width: 100%;
   min-height: 44px;
   padding: 0 12px;
@@ -260,6 +289,57 @@ figcaption {
   background: var(--surface);
 }
 
+.crop-box {
+  position: absolute;
+  z-index: 2;
+  border: 2px solid #ffffff;
+  box-shadow:
+    0 0 0 9999px rgb(23 32 51 / 42%),
+    0 0 0 1px rgb(37 99 235 / 85%);
+  cursor: move;
+  touch-action: none;
+}
+
+.crop-box span {
+  position: absolute;
+  right: -7px;
+  bottom: -7px;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  background: var(--accent);
+  cursor: nwse-resize;
+}
+
+.crop-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.crop-sliders {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.crop-sliders label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.crop-sliders input {
+  width: 100%;
+}
+
 .preview-frame img {
   display: none;
   width: 100%;
@@ -302,11 +382,20 @@ figcaption {
     grid-template-columns: 1fr;
   }
 
+  .prompt-panel,
+  .size-panel {
+    grid-column: auto;
+  }
+
   .job-id {
     max-width: 100%;
   }
 
   .preview-frame {
     min-height: 320px;
+  }
+
+  .crop-sliders {
+    grid-template-columns: 1fr;
   }
 }
