@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     openai_image_size: str = "1024x1024"
     comfyui_base_url: str = "http://127.0.0.1:8188"
     comfyui_workflow_path: Path = Path("workflows/toonify_img2img.json")
-    comfyui_timeout_seconds: int = Field(default=300, ge=1, le=3600)
+    comfyui_timeout_seconds: int = Field(default=900, ge=1, le=7200)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

@@ -4,13 +4,18 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 from fastapi.responses import FileResponse
 
 from app.config import get_settings
-from app.schemas.jobs import JobCreateRequest, JobResponse, JobStatus, PromptDefaultsResponse, ToonifyModel, ToonifyStyle
+from app.schemas.jobs import JobCreateRequest, JobResponse, JobStatus, PromptDefaultsResponse, STYLE_LABELS, StyleOption, ToonifyModel, ToonifyStyle
 from app.services.comfyui import get_default_image_size, get_default_workflow_prompt
 from app.services.jobs import ToonifyJob, job_store
 from app.services.processor import process_toonify_job
 
 
 router = APIRouter(prefix="/api/jobs", tags=["jobs"])
+
+
+@router.get("/styles", response_model=list[StyleOption])
+def get_styles() -> list[StyleOption]:
+    return [StyleOption(value=s, label=STYLE_LABELS[s]) for s in ToonifyStyle]
 
 
 @router.get("/prompt-defaults", response_model=PromptDefaultsResponse)

@@ -201,6 +201,29 @@ def _build_toonify_prompt(style: ToonifyStyle) -> str:
             "refined fantasy illustration, painterly texture, soft cinematic lighting, elegant "
             "composition, preserve the input photo structure and main subject"
         ),
+        ToonifyStyle.sketch: (
+            "pencil sketch, hand-drawn pencil drawing, fine line art, detailed cross-hatching, "
+            "graphite shading, (monochrome:1.3), (grayscale:1.3), expressive pencil strokes, "
+            "textured paper background, artist sketch style, loose gestural lines, "
+            "(preserve original composition:1.4), (same pose:1.3), (same number of people:1.4), "
+            "same clothing, same arrangement, high quality sketch, masterpiece"
+        ),
+        ToonifyStyle.full_anime: (
+            "full anime style illustration, anime character design, expressive anime face, "
+            "detailed anime eyes, clean cel shading, smooth anime coloring, vivid anime background, "
+            "(preserve number of people:1.5), (same composition:1.4), (same pose:1.4), "
+            "(same arrangement:1.4), (same walking direction:1.4), same clothing, same body position, "
+            "high quality anime art, masterpiece, best quality"
+        ),
+        ToonifyStyle.background_change: (
+            "anime style illustration, vivid detailed background, lush environment, "
+            "(new illustrated background:1.4), (replace background only:1.5), "
+            "(preserve original composition:1.6), (preserve all figures:1.5), "
+            "(preserve original pose:1.5), (preserve body silhouette:1.5), "
+            "(same number of people:1.4), (same clothing:1.4), (same walking direction:1.4), "
+            "same body position, same framing, same camera angle, "
+            "best quality, masterpiece"
+        ),
     }
     return prompts[style]
 

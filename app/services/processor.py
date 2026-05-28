@@ -158,5 +158,23 @@ def _build_toonify_prompt(style: ToonifyStyle) -> str:
             "Preserve the original composition and key details while using painterly texture, "
             "soft lighting, and tasteful stylization."
         ),
+        ToonifyStyle.sketch: (
+            "Transform the input photo into a hand-drawn pencil sketch. "
+            "Use fine line art, cross-hatching, and graphite shading in grayscale. "
+            "Preserve the original composition, number of people, poses, and arrangement. "
+            "The result should look like an artist drew it by hand on textured paper."
+        ),
+        ToonifyStyle.full_anime: (
+            "Transform the entire photo into a full anime-style illustration. "
+            "Convert both the subjects and the background into vivid anime art. "
+            "Strictly preserve the number of people, their arrangement, poses, and composition. "
+            "Use expressive anime character design, detailed anime eyes, cel shading, "
+            "and a beautifully illustrated anime environment."
+        ),
+        ToonifyStyle.background_change: (
+            "Replace the background of the input photo with a vivid, richly detailed anime environment. "
+            "Strictly preserve the subject's exact position, pose, framing, clothing, and identity. "
+            "Do not change the composition or layout — only the background changes."
+        ),
     }
     return prompts[style]

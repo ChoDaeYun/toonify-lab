@@ -30,7 +30,7 @@ let cropPercent = null;
 let cropInteractionMode = null;
 let dragStart = null;
 
-loadPromptDefaults();
+loadStyles().then(() => loadPromptDefaults());
 
 resetPromptButton.addEventListener("click", () => {
   promptInput.value = defaultPrompt;
@@ -205,6 +205,15 @@ async function createJob(imageId, style, model, prompt, width, height, crop) {
   });
 
   return parseJsonResponse(response);
+}
+
+async function loadStyles() {
+  const response = await fetch("/api/jobs/styles");
+  if (!response.ok) return;
+  const styles = await response.json();
+  styleSelect.innerHTML = styles
+    .map((s) => `<option value="${s.value}">${s.label}</option>`)
+    .join("");
 }
 
 async function loadPromptDefaults() {

@@ -40,8 +40,8 @@ def test_prompt_defaults() -> None:
     assert response.status_code == 200
     body = response.json()
     assert body["prompt"]
-    assert body["width"] == 512
-    assert body["height"] == 768
+    assert body["width"] == 832
+    assert body["height"] == 1216
 
 
 def test_upload_image(tmp_path: Path) -> None:

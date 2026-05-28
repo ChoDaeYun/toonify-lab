@@ -15,6 +15,24 @@ class ToonifyStyle(StrEnum):
     cartoon = "cartoon"
     character = "character"
     illustration = "illustration"
+    background_change = "background_change"
+    full_anime = "full_anime"
+    sketch = "sketch"
+
+
+STYLE_LABELS: dict[ToonifyStyle, str] = {
+    ToonifyStyle.cartoon: "Cartoon",
+    ToonifyStyle.character: "Character",
+    ToonifyStyle.illustration: "Illustration",
+    ToonifyStyle.background_change: "Background Change",
+    ToonifyStyle.full_anime: "Full Anime",
+    ToonifyStyle.sketch: "Sketch",
+}
+
+
+class StyleOption(BaseModel):
+    value: str
+    label: str
 
 
 class ToonifyModel(StrEnum):
