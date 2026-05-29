@@ -5,7 +5,7 @@ from uuid import uuid4
 
 import httpx
 
-from app.schemas.jobs import ToonifyModel, ToonifyStyle
+from app.schemas.jobs import HandQuality, ToonifyModel, ToonifyStyle
 
 
 def resolve_workflow_path(base_workflow_path: Path, style: ToonifyStyle) -> Path:
@@ -27,12 +27,14 @@ def transform_with_comfyui(
     base_url: str,
     workflow_path: Path,
     timeout_seconds: int,
+    hand_quality: HandQuality = HandQuality.normal,
+    denoise: float | None = None,
 ) -> Path:
     workflow = _load_workflow(resolve_workflow_path(workflow_path, style))
 
     with httpx.Client(base_url=base_url, timeout=30) as client:
         uploaded_name = _upload_image(client, source_path)
-        _patch_workflow(workflow, uploaded_name, style, model, prompt, width, height, job_id)
+        _patch_workflow(workflow, uploaded_name, style, model, prompt, width, height, job_id, hand_quality, denoise)
         prompt_id = _queue_prompt(client, workflow)
         image_info = _wait_for_result(client, prompt_id, timeout_seconds)
         image_bytes = _download_image(client, image_info)
@@ -88,17 +90,21 @@ def _patch_workflow(
     width: int | None,
     height: int | None,
     job_id: str,
+    hand_quality: HandQuality = HandQuality.normal,
+    denoise: float | None = None,
 ) -> None:
     load_image_node = _find_node(workflow, "LoadImage")
     positive_node = _find_positive_prompt_node(workflow)
     save_image_node = _find_node(workflow, "SaveImage")
     scale_node = _find_optional_node(workflow, "ImageScale")
     checkpoint_node = _find_optional_node(workflow, "CheckpointLoaderSimple")
+    ksampler_node = _find_optional_node(workflow, "KSampler")
 
     load_image_node["inputs"]["image"] = image_name
-    positive_node["inputs"]["text"] = (
-        prompt.strip() if prompt and prompt.strip() else _build_toonify_prompt(style)
-    )
+
+    base_prompt = prompt.strip() if prompt and prompt.strip() else _build_toonify_prompt(style)
+    positive_node["inputs"]["text"] = _apply_hand_quality(base_prompt, hand_quality)
+
     if checkpoint_node is not None:
         checkpoint_node["inputs"]["ckpt_name"] = model.value
     if scale_node is not None:
@@ -106,7 +112,23 @@ def _patch_workflow(
             scale_node["inputs"]["width"] = width
         if height is not None:
             scale_node["inputs"]["height"] = height
+    if ksampler_node is not None and denoise is not None:
+        ksampler_node["inputs"]["denoise"] = denoise
     save_image_node["inputs"]["filename_prefix"] = f"toonify_lab/{job_id}-{style.value}"
+
+
+_HAND_TOKENS_NORMAL = ", (detailed hands:1.3), (correct fingers:1.3), (natural hand pose:1.2), (five fingers:1.2)"
+_HAND_TOKENS_STRONG = ", (detailed hands:1.5), (correct fingers:1.5), (natural hand pose:1.4), (five fingers:1.4), (perfect anatomy:1.3)"
+
+
+def _apply_hand_quality(prompt: str, hand_quality: HandQuality) -> str:
+    if hand_quality == HandQuality.off:
+        return prompt
+    tokens = _HAND_TOKENS_NORMAL if hand_quality == HandQuality.normal else _HAND_TOKENS_STRONG
+    # 이미 손 토큰이 포함된 경우(예: 워크플로우 기본 프롬프트) 중복 삽입 방지
+    if "detailed hands" in prompt:
+        return prompt
+    return prompt + tokens
 
 
 def _queue_prompt(client: httpx.Client, workflow: dict) -> str:
@@ -200,6 +222,15 @@ def _build_toonify_prompt(style: ToonifyStyle) -> str:
         ToonifyStyle.illustration: (
             "refined fantasy illustration, painterly texture, soft cinematic lighting, elegant "
             "composition, preserve the input photo structure and main subject"
+        ),
+        ToonifyStyle.anime_line: (
+            "anime line art, clean black outlines, flat cel shading, vibrant colors, "
+            "(anime illustration:1.3), (hand-drawn line art:1.2), smooth color fills, "
+            "(detailed face:1.3), (detailed eyes:1.4), (clear nose:1.2), (defined lips:1.2), "
+            "(iris detail:1.3), expressive anime face, "
+            "(preserve original composition:1.5), (same pose:1.5), (same number of people:1.5), "
+            "(same gender:1.5), (same direction:1.4), "
+            "same clothing, same arrangement, high quality anime art, masterpiece, best quality"
         ),
         ToonifyStyle.sketch: (
             "pencil sketch, hand-drawn pencil drawing, fine line art, detailed cross-hatching, "

@@ -2,7 +2,7 @@ import base64
 from pathlib import Path
 from shutil import copyfile
 
-from app.schemas.jobs import ToonifyModel, ToonifyStyle
+from app.schemas.jobs import HandQuality, ToonifyModel, ToonifyStyle
 from app.services.comfyui import transform_with_comfyui
 from app.services.image_editing import CropBox, crop_image
 from app.services.jobs import job_store
@@ -21,6 +21,8 @@ def process_toonify_job(
     crop_width: int | None,
     crop_height: int | None,
     result_dir: Path,
+    hand_quality: HandQuality = HandQuality.normal,
+    denoise: float | None = None,
     image_provider: str = "mock",
     openai_api_key: str | None = None,
     openai_image_model: str = "gpt-image-1.5",
@@ -54,6 +56,8 @@ def process_toonify_job(
                 prompt=prompt,
                 width=width,
                 height=height,
+                hand_quality=hand_quality,
+                denoise=denoise,
                 result_dir=result_dir,
                 job_id=job_id,
                 base_url=comfyui_base_url,
@@ -157,6 +161,11 @@ def _build_toonify_prompt(style: ToonifyStyle) -> str:
             "Transform the input photo into a refined editorial illustration. "
             "Preserve the original composition and key details while using painterly texture, "
             "soft lighting, and tasteful stylization."
+        ),
+        ToonifyStyle.anime_line: (
+            "Transform the input photo into anime-style line art with flat cel shading. "
+            "Use clean black outlines, vibrant color fills, and expressive anime character design. "
+            "Preserve the original composition, number of people, poses, and arrangement."
         ),
         ToonifyStyle.sketch: (
             "Transform the input photo into a hand-drawn pencil sketch. "

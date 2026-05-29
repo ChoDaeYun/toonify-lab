@@ -18,6 +18,7 @@ class ToonifyStyle(StrEnum):
     background_change = "background_change"
     full_anime = "full_anime"
     sketch = "sketch"
+    anime_line = "anime_line"
 
 
 STYLE_LABELS: dict[ToonifyStyle, str] = {
@@ -27,6 +28,7 @@ STYLE_LABELS: dict[ToonifyStyle, str] = {
     ToonifyStyle.background_change: "Background Change",
     ToonifyStyle.full_anime: "Full Anime",
     ToonifyStyle.sketch: "Sketch",
+    ToonifyStyle.anime_line: "Anime Line Art",
 }
 
 
@@ -40,6 +42,12 @@ class ToonifyModel(StrEnum):
     cat_tower_noobai_xl = "catTowerNoobaiXL_chenkinnoobV12.safetensors"
 
 
+class HandQuality(StrEnum):
+    off = "off"      # 기본 프롬프트 그대로
+    normal = "normal"  # 손 품질 강화 토큰 추가
+    strong = "strong"  # 손 품질 강화 + 가중치 증가
+
+
 class JobCreateRequest(BaseModel):
     image_id: str = Field(min_length=1)
     style: ToonifyStyle = ToonifyStyle.cartoon
@@ -51,6 +59,8 @@ class JobCreateRequest(BaseModel):
     crop_y: int | None = Field(default=None, ge=0)
     crop_width: int | None = Field(default=None, ge=1)
     crop_height: int | None = Field(default=None, ge=1)
+    hand_quality: HandQuality = HandQuality.normal
+    denoise: float | None = Field(default=None, ge=0.1, le=1.0)
 
 
 class JobResponse(BaseModel):
@@ -65,6 +75,8 @@ class JobResponse(BaseModel):
     crop_y: int | None = None
     crop_width: int | None = None
     crop_height: int | None = None
+    hand_quality: HandQuality = HandQuality.normal
+    denoise: float | None = None
     status: JobStatus
     result_path: str | None = None
     error_message: str | None = None

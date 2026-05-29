@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from uuid import uuid4
 
-from app.schemas.jobs import JobStatus, ToonifyModel, ToonifyStyle
+from app.schemas.jobs import HandQuality, JobStatus, ToonifyModel, ToonifyStyle
 
 
 @dataclass
@@ -19,6 +19,8 @@ class ToonifyJob:
     crop_y: int | None
     crop_width: int | None
     crop_height: int | None
+    hand_quality: HandQuality
+    denoise: float | None
     status: JobStatus
     result_path: Path | None
     error_message: str | None
@@ -42,6 +44,8 @@ class JobStore:
         crop_y: int | None = None,
         crop_width: int | None = None,
         crop_height: int | None = None,
+        hand_quality: HandQuality = HandQuality.normal,
+        denoise: float | None = None,
     ) -> ToonifyJob:
         now = datetime.now(UTC)
         job = ToonifyJob(
@@ -56,6 +60,8 @@ class JobStore:
             crop_y=crop_y,
             crop_width=crop_width,
             crop_height=crop_height,
+            hand_quality=hand_quality,
+            denoise=denoise,
             status=JobStatus.pending,
             result_path=None,
             error_message=None,

@@ -212,7 +212,7 @@ async function loadStyles() {
   if (!response.ok) return;
   const styles = await response.json();
   styleSelect.innerHTML = styles
-    .map((s) => `<option value="${s.value}">${s.label}</option>`)
+    .map((s) => `<option value="${s.value}"${s.value === "anime_line" ? " selected" : ""}>${s.label}</option>`)
     .join("");
 }
 

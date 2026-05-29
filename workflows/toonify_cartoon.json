@@ -32,7 +32,7 @@
   },
   "7": {
     "inputs": {
-      "text": "(deformed face:1.6), (distorted face:1.6), (blurry face:1.6), (melting face:1.5), (morphed face:1.5), (wrong face:1.5), (disfigured:1.4), (ugly:1.4), (bad anatomy:1.4), asymmetrical eyes, misaligned eyes, cross-eyed, extra eyes, missing eyes, no pupils, blank eyes, floating eyes, unnatural eyes, malformed nose, malformed mouth, deformed ears, missing limbs, extra limbs, 3d render, photorealistic, harsh shadows, oversaturated colors, glossy plastic look, watermark, text, logo, signature, worst quality, jpeg artifacts",
+      "text": "nsfw, nude, naked, sexual, explicit, revealing clothing, (text in image:1.5), (letters:1.4), (words:1.4), (watermark:1.4), (logo:1.4), (deformed face:1.6), (distorted face:1.6), (blurry face:1.6), (melting face:1.5), (morphed face:1.5), (wrong face:1.5), (disfigured:1.4), (ugly:1.4), (bad anatomy:1.4), asymmetrical eyes, misaligned eyes, cross-eyed, extra eyes, missing eyes, no pupils, blank eyes, floating eyes, unnatural eyes, malformed nose, malformed mouth, deformed ears, missing limbs, extra limbs, 3d render, photorealistic, harsh shadows, oversaturated colors, glossy plastic look, signature, worst quality, jpeg artifacts",
       "clip": ["4", 1]
     },
     "class_type": "CLIPTextEncode",

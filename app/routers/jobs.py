@@ -4,7 +4,7 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 from fastapi.responses import FileResponse
 
 from app.config import get_settings
-from app.schemas.jobs import JobCreateRequest, JobResponse, JobStatus, PromptDefaultsResponse, STYLE_LABELS, StyleOption, ToonifyModel, ToonifyStyle
+from app.schemas.jobs import HandQuality, JobCreateRequest, JobResponse, JobStatus, PromptDefaultsResponse, STYLE_LABELS, StyleOption, ToonifyModel, ToonifyStyle
 from app.services.comfyui import get_default_image_size, get_default_workflow_prompt
 from app.services.jobs import ToonifyJob, job_store
 from app.services.processor import process_toonify_job
@@ -57,6 +57,8 @@ def create_job(request: JobCreateRequest, background_tasks: BackgroundTasks) -> 
         crop_y=request.crop_y,
         crop_width=request.crop_width,
         crop_height=request.crop_height,
+        hand_quality=request.hand_quality,
+        denoise=request.denoise,
     )
     background_tasks.add_task(
         process_toonify_job,
@@ -72,6 +74,8 @@ def create_job(request: JobCreateRequest, background_tasks: BackgroundTasks) -> 
         request.crop_width,
         request.crop_height,
         settings.result_dir,
+        request.hand_quality,
+        request.denoise,
         settings.image_provider,
         settings.openai_api_key,
         settings.openai_image_model,
@@ -150,6 +154,8 @@ def _to_response(job: ToonifyJob) -> JobResponse:
         crop_y=job.crop_y,
         crop_width=job.crop_width,
         crop_height=job.crop_height,
+        hand_quality=job.hand_quality,
+        denoise=job.denoise,
         status=job.status,
         result_path=str(job.result_path) if job.result_path else None,
         error_message=job.error_message,

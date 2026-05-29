@@ -83,7 +83,7 @@
   },
   "10": {
     "inputs": {
-      "text": "people, person, human, figure, body, face, extra limbs, missing limbs, deformed, blurry, watermark, text, logo, worst quality, jpeg artifacts",
+      "text": "nsfw, nude, naked, sexual, explicit, (text in image:1.5), (letters:1.4), (words:1.4), (watermark:1.4), (logo:1.4), people, person, human, figure, body, face, extra limbs, missing limbs, deformed, blurry, worst quality, jpeg artifacts",
       "clip": ["8", 1]
     },
     "class_type": "CLIPTextEncode",
